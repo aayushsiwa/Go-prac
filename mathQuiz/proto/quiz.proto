@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package quiz;
+
+option go_package = "mathQuiz/proto;proto";
+
+message Question {
+  string question = 1;
+}
+
+message Answer {
+  string answer = 1;
+}
+
+message Score {
+  int32 correct = 1;
+  int32 total = 2;
+}
+
+message QuizResponse {
+  oneof payload {
+    Question question = 1;
+    Score score = 2;
+  }
+}
+
+service QuizService {
+  // Bidirectional streaming for question/answer
+  rpc Play(stream Answer) returns (stream QuizResponse);
+}
