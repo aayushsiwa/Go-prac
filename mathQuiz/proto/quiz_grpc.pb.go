@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	QuizService_Play_FullMethodName              = "/quiz.QuizService/Play"
-	QuizService_StreamLeaderboard_FullMethodName = "/quiz.QuizService/StreamLeaderboard"
+	QuizService_Play_FullMethodName             = "/quiz.QuizService/Play"
+	QuizService_StreamScoreboard_FullMethodName = "/quiz.QuizService/StreamScoreboard"
 )
 
 // QuizServiceClient is the client API for QuizService service.
@@ -29,7 +29,7 @@ const (
 type QuizServiceClient interface {
 	// Bidirectional streaming for question/answer
 	Play(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Answer, QuizResponse], error)
-	StreamLeaderboard(ctx context.Context, in *Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Leaderboard], error)
+	StreamScoreboard(ctx context.Context, in *Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Scoreboard], error)
 }
 
 type quizServiceClient struct {
@@ -53,13 +53,13 @@ func (c *quizServiceClient) Play(ctx context.Context, opts ...grpc.CallOption) (
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type QuizService_PlayClient = grpc.BidiStreamingClient[Answer, QuizResponse]
 
-func (c *quizServiceClient) StreamLeaderboard(ctx context.Context, in *Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Leaderboard], error) {
+func (c *quizServiceClient) StreamScoreboard(ctx context.Context, in *Empty, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Scoreboard], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &QuizService_ServiceDesc.Streams[1], QuizService_StreamLeaderboard_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &QuizService_ServiceDesc.Streams[1], QuizService_StreamScoreboard_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[Empty, Leaderboard]{ClientStream: stream}
+	x := &grpc.GenericClientStream[Empty, Scoreboard]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (c *quizServiceClient) StreamLeaderboard(ctx context.Context, in *Empty, op
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type QuizService_StreamLeaderboardClient = grpc.ServerStreamingClient[Leaderboard]
+type QuizService_StreamScoreboardClient = grpc.ServerStreamingClient[Scoreboard]
 
 // QuizServiceServer is the server API for QuizService service.
 // All implementations must embed UnimplementedQuizServiceServer
@@ -78,7 +78,7 @@ type QuizService_StreamLeaderboardClient = grpc.ServerStreamingClient[Leaderboar
 type QuizServiceServer interface {
 	// Bidirectional streaming for question/answer
 	Play(grpc.BidiStreamingServer[Answer, QuizResponse]) error
-	StreamLeaderboard(*Empty, grpc.ServerStreamingServer[Leaderboard]) error
+	StreamScoreboard(*Empty, grpc.ServerStreamingServer[Scoreboard]) error
 	mustEmbedUnimplementedQuizServiceServer()
 }
 
@@ -92,8 +92,8 @@ type UnimplementedQuizServiceServer struct{}
 func (UnimplementedQuizServiceServer) Play(grpc.BidiStreamingServer[Answer, QuizResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Play not implemented")
 }
-func (UnimplementedQuizServiceServer) StreamLeaderboard(*Empty, grpc.ServerStreamingServer[Leaderboard]) error {
-	return status.Errorf(codes.Unimplemented, "method StreamLeaderboard not implemented")
+func (UnimplementedQuizServiceServer) StreamScoreboard(*Empty, grpc.ServerStreamingServer[Scoreboard]) error {
+	return status.Errorf(codes.Unimplemented, "method StreamScoreboard not implemented")
 }
 func (UnimplementedQuizServiceServer) mustEmbedUnimplementedQuizServiceServer() {}
 func (UnimplementedQuizServiceServer) testEmbeddedByValue()                     {}
@@ -123,16 +123,16 @@ func _QuizService_Play_Handler(srv interface{}, stream grpc.ServerStream) error 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type QuizService_PlayServer = grpc.BidiStreamingServer[Answer, QuizResponse]
 
-func _QuizService_StreamLeaderboard_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _QuizService_StreamScoreboard_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(Empty)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(QuizServiceServer).StreamLeaderboard(m, &grpc.GenericServerStream[Empty, Leaderboard]{ServerStream: stream})
+	return srv.(QuizServiceServer).StreamScoreboard(m, &grpc.GenericServerStream[Empty, Scoreboard]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type QuizService_StreamLeaderboardServer = grpc.ServerStreamingServer[Leaderboard]
+type QuizService_StreamScoreboardServer = grpc.ServerStreamingServer[Scoreboard]
 
 // QuizService_ServiceDesc is the grpc.ServiceDesc for QuizService service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -149,8 +149,8 @@ var QuizService_ServiceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 		{
-			StreamName:    "StreamLeaderboard",
-			Handler:       _QuizService_StreamLeaderboard_Handler,
+			StreamName:    "StreamScoreboard",
+			Handler:       _QuizService_StreamScoreboard_Handler,
 			ServerStreams: true,
 		},
 	},

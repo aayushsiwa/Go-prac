@@ -19,10 +19,11 @@ type PlayerScore struct {
 
 type Server struct {
 	UnimplementedQuizServiceServer
-	questions []string
-	answers   map[string]string
-	scores    []PlayerScore
-	mu        sync.Mutex
+	questions         []string
+	answers           map[string]string
+	scores            []PlayerScore
+	mu                sync.Mutex
+	scoreboardUpdated chan struct{}
 }
 
 func NewQuizServer() *Server {
@@ -64,8 +65,9 @@ func NewQuizServer() *Server {
 	}
 
 	return &Server{
-		questions: questions,
-		answers:   answers,
+		questions:         questions,
+		answers:           answers,
+		scoreboardUpdated: make(chan struct{}, 1),
 	}
 }
 
@@ -127,5 +129,11 @@ func (s *Server) Play(stream QuizService_PlayServer) error {
 	}
 
 	log.Printf("%s finished quiz: %d/%d", playerID, correct, n)
+
+	select {
+	case s.scoreboardUpdated <- struct{}{}:
+	default:
+	}
+
 	return nil
 }

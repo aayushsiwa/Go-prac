@@ -26,7 +26,7 @@ message QuizResponse {
   }
 }
 
-message Leaderboard {
+message Scoreboard {
   repeated Score scores = 1;
 }
 
@@ -35,6 +35,6 @@ message Empty {}
 service QuizService {
   // Bidirectional streaming for question/answer
   rpc Play(stream Answer) returns (stream QuizResponse);
-  rpc StreamLeaderboard(Empty) returns (stream Leaderboard);
+  rpc StreamScoreboard(Empty) returns (stream Scoreboard);
 }
 

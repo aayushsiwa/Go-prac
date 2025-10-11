@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 
 	pb "mathQuiz/proto"
@@ -20,22 +21,32 @@ func main() {
 
 	client := pb.NewQuizServiceClient(conn)
 
-	stream, err := client.StreamLeaderboard(context.Background(), &pb.Empty{})
+	stream, err := client.StreamScoreboard(context.Background(), &pb.Empty{})
 	if err != nil {
-		log.Fatalf("Error getting leaderboard: %v", err)
+		log.Fatalf("Error getting scoreboard: %v", err)
 	}
 
-	fmt.Println("🏆 Live Leaderboard Updates:")
+	fmt.Println("🏆 Live Scoreboard Updates:")
+
+	allScores := make([]*pb.Score, 0)
 
 	for {
-		resp, err := stream.Recv()
+		update, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
 		if err != nil {
-			log.Fatalf("Stream closed: %v", err)
+			log.Fatalf("Error receiving scoreboard: %v", err)
 		}
 
-		fmt.Println("\n------ Leaderboard ------")
-		for i, s := range resp.GetScores() {
-			fmt.Printf("%d. %s — %d/%d\n", i+1, s.GetPlayerId(), s.GetCorrect(), s.GetTotal())
-		}
+		// Each update now has just one score
+		newScore := update.Scores[0]
+		allScores = append(allScores, newScore)
+
+		fmt.Printf("%d. %s — %d/%d\n",
+			len(allScores),
+			newScore.GetPlayerId(),
+			newScore.GetCorrect(),
+			newScore.GetTotal())
 	}
 }

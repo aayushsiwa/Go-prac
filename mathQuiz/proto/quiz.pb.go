@@ -259,27 +259,27 @@ func (*QuizResponse_Question) isQuizResponse_Payload() {}
 
 func (*QuizResponse_Score) isQuizResponse_Payload() {}
 
-type Leaderboard struct {
+type Scoreboard struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Scores        []*Score               `protobuf:"bytes,1,rep,name=scores,proto3" json:"scores,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Leaderboard) Reset() {
-	*x = Leaderboard{}
+func (x *Scoreboard) Reset() {
+	*x = Scoreboard{}
 	mi := &file_proto_quiz_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Leaderboard) String() string {
+func (x *Scoreboard) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Leaderboard) ProtoMessage() {}
+func (*Scoreboard) ProtoMessage() {}
 
-func (x *Leaderboard) ProtoReflect() protoreflect.Message {
+func (x *Scoreboard) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_quiz_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -291,12 +291,12 @@ func (x *Leaderboard) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Leaderboard.ProtoReflect.Descriptor instead.
-func (*Leaderboard) Descriptor() ([]byte, []int) {
+// Deprecated: Use Scoreboard.ProtoReflect.Descriptor instead.
+func (*Scoreboard) Descriptor() ([]byte, []int) {
 	return file_proto_quiz_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *Leaderboard) GetScores() []*Score {
+func (x *Scoreboard) GetScores() []*Score {
 	if x != nil {
 		return x.Scores
 	}
@@ -356,13 +356,14 @@ const file_proto_quiz_proto_rawDesc = "" +
 	"\fQuizResponse\x12,\n" +
 	"\bquestion\x18\x01 \x01(\v2\x0e.quiz.QuestionH\x00R\bquestion\x12#\n" +
 	"\x05score\x18\x02 \x01(\v2\v.quiz.ScoreH\x00R\x05scoreB\t\n" +
-	"\apayload\"2\n" +
-	"\vLeaderboard\x12#\n" +
+	"\apayload\"1\n" +
+	"\n" +
+	"Scoreboard\x12#\n" +
 	"\x06scores\x18\x01 \x03(\v2\v.quiz.ScoreR\x06scores\"\a\n" +
-	"\x05Empty2r\n" +
+	"\x05Empty2p\n" +
 	"\vQuizService\x12,\n" +
-	"\x04Play\x12\f.quiz.Answer\x1a\x12.quiz.QuizResponse(\x010\x01\x125\n" +
-	"\x11StreamLeaderboard\x12\v.quiz.Empty\x1a\x11.quiz.Leaderboard0\x01B\x16Z\x14mathQuiz/proto;protob\x06proto3"
+	"\x04Play\x12\f.quiz.Answer\x1a\x12.quiz.QuizResponse(\x010\x01\x123\n" +
+	"\x10StreamScoreboard\x12\v.quiz.Empty\x1a\x10.quiz.Scoreboard0\x01B\x16Z\x14mathQuiz/proto;protob\x06proto3"
 
 var (
 	file_proto_quiz_proto_rawDescOnce sync.Once
@@ -382,17 +383,17 @@ var file_proto_quiz_proto_goTypes = []any{
 	(*Answer)(nil),       // 1: quiz.Answer
 	(*Score)(nil),        // 2: quiz.Score
 	(*QuizResponse)(nil), // 3: quiz.QuizResponse
-	(*Leaderboard)(nil),  // 4: quiz.Leaderboard
+	(*Scoreboard)(nil),   // 4: quiz.Scoreboard
 	(*Empty)(nil),        // 5: quiz.Empty
 }
 var file_proto_quiz_proto_depIdxs = []int32{
 	0, // 0: quiz.QuizResponse.question:type_name -> quiz.Question
 	2, // 1: quiz.QuizResponse.score:type_name -> quiz.Score
-	2, // 2: quiz.Leaderboard.scores:type_name -> quiz.Score
+	2, // 2: quiz.Scoreboard.scores:type_name -> quiz.Score
 	1, // 3: quiz.QuizService.Play:input_type -> quiz.Answer
-	5, // 4: quiz.QuizService.StreamLeaderboard:input_type -> quiz.Empty
+	5, // 4: quiz.QuizService.StreamScoreboard:input_type -> quiz.Empty
 	3, // 5: quiz.QuizService.Play:output_type -> quiz.QuizResponse
-	4, // 6: quiz.QuizService.StreamLeaderboard:output_type -> quiz.Leaderboard
+	4, // 6: quiz.QuizService.StreamScoreboard:output_type -> quiz.Scoreboard
 	5, // [5:7] is the sub-list for method output_type
 	3, // [3:5] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name
