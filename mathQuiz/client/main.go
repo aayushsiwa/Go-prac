@@ -29,6 +29,8 @@ func main() {
 		log.Fatalf("Error creating quiz stream: %v", err)
 	}
 
+	reader := bufio.NewReader(os.Stdin)
+
 	header, err := stream.Header()
 	if err != nil {
 		log.Fatalf("Error getting header: %v", err)
@@ -41,8 +43,6 @@ func main() {
 	nParsed, _ := strconv.Atoi(nStr)
 	n := int32(nParsed)
 	fmt.Printf("Quiz has %d questions.\n", n)
-
-	reader := bufio.NewReader(os.Stdin)
 
 	for i := int32(0); i < n; i++ {
 		res, err := stream.Recv()
@@ -63,7 +63,6 @@ func main() {
 		// Send answer to server
 		if err := stream.Send(&pb.Answer{Answer: answer}); err != nil {
 			log.Fatalf("Error sending answer: %v", err)
-			break
 		}
 	}
 
@@ -73,5 +72,5 @@ func main() {
 		log.Fatalf("Error receiving final score: %v", err)
 	}
 	score := resp.GetScore()
-	fmt.Printf("\nFinal Score: %d/%d\n", score.Correct, score.Total)
+	fmt.Printf("\n %s -- Final Score: %d/%d\n", score.PlayerId, score.Correct, score.Total)
 }

@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	QuizService_Play_FullMethodName = "/quiz.QuizService/Play"
+	QuizService_Play_FullMethodName           = "/quiz.QuizService/Play"
+	QuizService_GetLeaderboard_FullMethodName = "/quiz.QuizService/GetLeaderboard"
 )
 
 // QuizServiceClient is the client API for QuizService service.
@@ -28,6 +29,7 @@ const (
 type QuizServiceClient interface {
 	// Bidirectional streaming for question/answer
 	Play(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Answer, QuizResponse], error)
+	GetLeaderboard(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Leaderboard, error)
 }
 
 type quizServiceClient struct {
@@ -51,12 +53,23 @@ func (c *quizServiceClient) Play(ctx context.Context, opts ...grpc.CallOption) (
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type QuizService_PlayClient = grpc.BidiStreamingClient[Answer, QuizResponse]
 
+func (c *quizServiceClient) GetLeaderboard(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Leaderboard, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Leaderboard)
+	err := c.cc.Invoke(ctx, QuizService_GetLeaderboard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QuizServiceServer is the server API for QuizService service.
 // All implementations must embed UnimplementedQuizServiceServer
 // for forward compatibility.
 type QuizServiceServer interface {
 	// Bidirectional streaming for question/answer
 	Play(grpc.BidiStreamingServer[Answer, QuizResponse]) error
+	GetLeaderboard(context.Context, *Empty) (*Leaderboard, error)
 	mustEmbedUnimplementedQuizServiceServer()
 }
 
@@ -69,6 +82,9 @@ type UnimplementedQuizServiceServer struct{}
 
 func (UnimplementedQuizServiceServer) Play(grpc.BidiStreamingServer[Answer, QuizResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Play not implemented")
+}
+func (UnimplementedQuizServiceServer) GetLeaderboard(context.Context, *Empty) (*Leaderboard, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLeaderboard not implemented")
 }
 func (UnimplementedQuizServiceServer) mustEmbedUnimplementedQuizServiceServer() {}
 func (UnimplementedQuizServiceServer) testEmbeddedByValue()                     {}
@@ -98,13 +114,36 @@ func _QuizService_Play_Handler(srv interface{}, stream grpc.ServerStream) error 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type QuizService_PlayServer = grpc.BidiStreamingServer[Answer, QuizResponse]
 
+func _QuizService_GetLeaderboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QuizServiceServer).GetLeaderboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QuizService_GetLeaderboard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QuizServiceServer).GetLeaderboard(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // QuizService_ServiceDesc is the grpc.ServiceDesc for QuizService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var QuizService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "quiz.QuizService",
 	HandlerType: (*QuizServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetLeaderboard",
+			Handler:    _QuizService_GetLeaderboard_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "Play",
