@@ -359,10 +359,10 @@ const file_proto_quiz_proto_rawDesc = "" +
 	"\apayload\"2\n" +
 	"\vLeaderboard\x12#\n" +
 	"\x06scores\x18\x01 \x03(\v2\v.quiz.ScoreR\x06scores\"\a\n" +
-	"\x05Empty2m\n" +
+	"\x05Empty2r\n" +
 	"\vQuizService\x12,\n" +
-	"\x04Play\x12\f.quiz.Answer\x1a\x12.quiz.QuizResponse(\x010\x01\x120\n" +
-	"\x0eGetLeaderboard\x12\v.quiz.Empty\x1a\x11.quiz.LeaderboardB\x16Z\x14mathQuiz/proto;protob\x06proto3"
+	"\x04Play\x12\f.quiz.Answer\x1a\x12.quiz.QuizResponse(\x010\x01\x125\n" +
+	"\x11StreamLeaderboard\x12\v.quiz.Empty\x1a\x11.quiz.Leaderboard0\x01B\x16Z\x14mathQuiz/proto;protob\x06proto3"
 
 var (
 	file_proto_quiz_proto_rawDescOnce sync.Once
@@ -390,9 +390,9 @@ var file_proto_quiz_proto_depIdxs = []int32{
 	2, // 1: quiz.QuizResponse.score:type_name -> quiz.Score
 	2, // 2: quiz.Leaderboard.scores:type_name -> quiz.Score
 	1, // 3: quiz.QuizService.Play:input_type -> quiz.Answer
-	5, // 4: quiz.QuizService.GetLeaderboard:input_type -> quiz.Empty
+	5, // 4: quiz.QuizService.StreamLeaderboard:input_type -> quiz.Empty
 	3, // 5: quiz.QuizService.Play:output_type -> quiz.QuizResponse
-	4, // 6: quiz.QuizService.GetLeaderboard:output_type -> quiz.Leaderboard
+	4, // 6: quiz.QuizService.StreamLeaderboard:output_type -> quiz.Leaderboard
 	5, // [5:7] is the sub-list for method output_type
 	3, // [3:5] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name

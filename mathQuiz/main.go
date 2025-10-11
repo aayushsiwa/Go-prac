@@ -20,13 +20,22 @@ func main() {
 
 	client := pb.NewQuizServiceClient(conn)
 
-	resp, err := client.GetLeaderboard(context.Background(), &pb.Empty{})
+	stream, err := client.StreamLeaderboard(context.Background(), &pb.Empty{})
 	if err != nil {
 		log.Fatalf("Error getting leaderboard: %v", err)
 	}
 
-	fmt.Println("🏆 Leaderboard:")
-	for i, s := range resp.GetScores() {
-		fmt.Printf("%d. %s — %d/%d\n", i+1, s.GetPlayerId(), s.GetCorrect(), s.GetTotal())
+	fmt.Println("🏆 Live Leaderboard Updates:")
+
+	for {
+		resp, err := stream.Recv()
+		if err != nil {
+			log.Fatalf("Stream closed: %v", err)
+		}
+
+		fmt.Println("\n------ Leaderboard ------")
+		for i, s := range resp.GetScores() {
+			fmt.Printf("%d. %s — %d/%d\n", i+1, s.GetPlayerId(), s.GetCorrect(), s.GetTotal())
+		}
 	}
 }

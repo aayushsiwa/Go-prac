@@ -1,21 +1,28 @@
 package proto
 
 import (
-	"context"
+	"log"
+	"time"
 )
 
-func (s *Server) GetLeaderboard(ctx context.Context, _ *Empty) (*Leaderboard, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+func (s *Server) StreamLeaderboard(_ *Empty, stream QuizService_StreamLeaderboardServer) error {
 
-	var scores []*Score
-	for _, ps := range s.scores {
-		scores = append(scores, &Score{
-			PlayerId: ps.ID,
-			Correct:  int32(ps.Correct),
-			Total:    int32(ps.Total),
-		})
+	for {
+		s.mu.Lock()
+		var leaderboard Leaderboard
+		for _, ps := range s.scores {
+			leaderboard.Scores = append(leaderboard.Scores, &Score{
+				PlayerId: ps.ID,
+				Correct:  int32(ps.Correct),
+				Total:    int32(ps.Total),
+			})
+		}
+		s.mu.Unlock()
+
+		if err := stream.Send(&leaderboard); err != nil {
+			log.Println("Error streaming leaderboard:", err)
+			return err
+		}
+		time.Sleep(2 * time.Second)
 	}
-
-	return &Leaderboard{Scores: scores}, nil
 }

@@ -35,6 +35,6 @@ message Empty {}
 service QuizService {
   // Bidirectional streaming for question/answer
   rpc Play(stream Answer) returns (stream QuizResponse);
-  rpc GetLeaderboard(Empty) returns (Leaderboard);
+  rpc StreamLeaderboard(Empty) returns (stream Leaderboard);
 }
 
