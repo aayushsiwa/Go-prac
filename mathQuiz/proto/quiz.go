@@ -27,20 +27,46 @@ type Server struct {
 }
 
 func NewQuizServer() *Server {
-	q := []string{
-		"5 + 5 ?",
-		"12 - 7 ?",
-		"5 * 6 ?",
-	}
-	a := map[string]string{
-		"5 + 5 ?":  "10",
-		"12 - 7 ?": "5",
-		"5 * 6 ?":  "30",
+	rand.Seed(time.Now().UnixNano())
+
+	numQuestions := 10 // you can change this to however many you want
+	questions := make([]string, numQuestions)
+	answers := make(map[string]string)
+
+	ops := []string{"+", "-", "*", "/"}
+
+	for i := 0; i < numQuestions; i++ {
+		a := rand.Intn(20) + 1
+		b := rand.Intn(20) + 1
+		op := ops[rand.Intn(len(ops))]
+
+		var q string
+		var ans int
+
+		switch op {
+		case "+":
+			q = fmt.Sprintf("%d + %d ?", a, b)
+			ans = a + b
+		case "-":
+			q = fmt.Sprintf("%d - %d ?", a, b)
+			ans = a - b
+		case "*":
+			q = fmt.Sprintf("%d * %d ?", a, b)
+			ans = a * b
+		case "/":
+			// avoid non-integer division
+			a = b * (rand.Intn(10) + 1)
+			q = fmt.Sprintf("%d / %d ?", a, b)
+			ans = a / b
+		}
+
+		questions[i] = q
+		answers[q] = fmt.Sprintf("%d", ans)
 	}
 
 	return &Server{
-		questions: q,
-		answers:   a,
+		questions: questions,
+		answers:   answers,
 	}
 }
 
